@@ -4,8 +4,8 @@ A self-contained mince pie taste testing application designed to help teams coll
 
 <div align="center">
 
-### First Run Setup
-<img src="https://raw.githubusercontent.com/ajb3932/famli/main/frontend/public/images/famli-first_run.jpg" title="First Run Setup" style="max-width:100%;" width="800" />
+### App Screenshot
+<img src="https://raw.githubusercontent.com/ajb3932/PieScore/refs/heads/main/client/public/images/piescore.jpg" title="App Screenshot" style="max-width:100%;" width="800" />
 
 </div>
 
