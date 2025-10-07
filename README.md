@@ -2,22 +2,13 @@
 
 A self-contained mince pie taste testing application designed to help teams collaboratively rate and track mince pie tastings. Features a public leaderboard with an admin interface for submitting reviews.
 
-## Features
+<div align="center">
 
-- **Public Leaderboard**: View all pies ranked by average scores
-- **Multi-criteria Rating**: Rate pies on Filling, Pastry, Appearance, and Overall quality (1-5 stars)
-- **User Management**: Admin can create reviewer accounts
-- **Responsive Design**: Mobile-first design with dark/light mode
-- **PWA Support**: Install on mobile devices as a native-like app
-- **Self-Contained**: Single Docker container with SQLite database
+### First Run Setup
+<img src="https://raw.githubusercontent.com/ajb3932/famli/main/frontend/public/images/famli-first_run.jpg" title="First Run Setup" style="max-width:100%;" width="800" />
+![piescore](https://github.com/user-attachments/assets/dfe24fef-7584-4798-9959-c39ad0158f50)
 
-## Technology Stack
-
-- **Backend**: Node.js, Express, SQLite (better-sqlite3)
-- **Frontend**: React, Tailwind CSS, React Router
-- **Build Tool**: Vite
-- **Authentication**: bcrypt, express-session
-- **Deployment**: Docker
+</div>
 
 ## Quick Start
 
