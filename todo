@@ -1,0 +1,683 @@
+Pie Tracker - Project BriefExecutive Summary
+Pie Tracker is a self-contained mince pie taste testing application designed to help teams collaboratively rate and track mince pie tastings. The application combines a public leaderboard with an admin interface for submitting reviews, all packaged as a single Docker container with SQLite persistence.Project OverviewApplication Name
+pie-trackerCore Purpose
+Enable multiple reviewers to rate mince pies across four criteria (Filling, Pastry, Appearance, Overall) with results displayed on a public leaderboard ranked by average scores.Target Deployment
+
+Single Docker container for Unraid App Store compatibility
+Self-contained with no external dependencies
+Mobile-first responsive design
+PWA-enabled for phone installation
+Technical RequirementsArchitecture
+
+Monolithic Container: Single Docker image containing both frontend and backend
+Backend: Node.js/Express server
+Frontend: Modern JavaScript (React/Vue/vanilla) with Tailwind CSS
+Database: SQLite with volume mapping
+Port: 9993 (single exposed port)
+Package Manager: npm
+Database & Persistence
+
+SQLite database file
+Volume mapping: /appdata/wishlist/db:/db
+Database auto-initialization on first boot
+Persistent storage outside container
+User Interface
+
+Mobile-first responsive design
+Light/Dark mode toggle (persistent via cookie)
+Smooth animations and transitions
+Custom logo integration on all pages
+Primary color: Dark magenta (#8B008B or similar)
+PWA Requirements
+
+Service worker for offline capability
+Web app manifest
+Installable on mobile devices
+App icons and splash screens
+Functional RequirementsUser Management
+
+First Boot Experience
+
+Database initialization
+Registration form for first admin user
+No access to app until admin is created
+
+
+
+User Roles
+
+Admin: Full access (create users, add pies, review pies)
+Reviewer: Can review pies only
+
+
+
+Authentication
+
+Login/logout functionality
+Session management
+Password hashing (bcrypt)
+
+
+Core FeaturesPublic Leaderboard (Main Page)
+
+Table displaying all pies with:
+
+Pie name
+Individual reviewer scores (4 categories each)
+Overall average score
+
+
+Sorted by highest overall score
+Accessible without login
+Real-time updates when new reviews added
+Admin Interface
+
+Add New Pie
+
+Form to submit pie name
+Available to all authenticated users
+
+
+
+Submit Reviews
+
+View all pies
+Submit ratings for unreviewed pies only
+Four rating categories (1-5 stars/scale):
+
+Filling
+Pastry
+Appearance
+Overall Rating
+
+
+Cannot re-review same pie
+Visual indicator of reviewed vs. unreviewed pies
+
+
+Rating System
+
+Scale: 1-5 for each category
+Four categories per pie:
+
+Filling
+Pastry
+Appearance
+Overall Rating
+
+
+Leaderboard shows individual category scores and calculates overall average
+Development PlanPhase 1: Project Setup & Infrastructure
+Estimated Time: 4-6 hours1.1 Project Initialization
+
+Initialize npm project
+Set up project directory structure
+Configure ESLint and Prettier
+1.2 Dependency Installation
+Backend:
+- express
+- sqlite3 (or better-sqlite3)
+- bcrypt
+- cookie-parser
+- express-session
+- dotenv
+
+Frontend:
+- Tailwind CSS
+- PostCSS & Autoprefixer
+- Frontend framework decision (React recommended)
+
+Build Tools:
+- Webpack/Vite for bundling
+- Concurrently for running multiple processes
+
+PWA:
+- workbox-webpack-plugin or similar1.3 Directory Structure
+pie-tracker/
+├── server/
+│   ├── index.js
+│   ├── db/
+│   │   ├── init.js
+│   │   └── queries.js
+│   ├── routes/
+│   │   ├── auth.js
+│   │   ├── pies.js
+│   │   └── users.js
+│   └── middleware/
+│       └── auth.js
+├── client/
+│   ├── public/
+│   │   ├── manifest.json
+│   │   ├── service-worker.js
+│   │   └── icons/
+│   ├── src/
+│   │   ├── components/
+│   │   ├── pages/
+│   │   ├── styles/
+│   │   └── utils/
+│   └── index.html
+├── db/
+│   └── (SQLite database file)
+├── Dockerfile
+├── docker-compose.yml (for testing)
+├── package.json
+└── README.mdPhase 2: Database Design & Implementation
+Estimated Time: 3-4 hours2.1 Database Schemasql-- Users Table
+CREATE TABLE users (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    username TEXT UNIQUE NOT NULL,
+    password_hash TEXT NOT NULL,
+    is_admin BOOLEAN DEFAULT 0,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Pies Table
+CREATE TABLE pies (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    created_by INTEGER,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (created_by) REFERENCES users(id)
+);
+
+-- Reviews Table
+CREATE TABLE reviews (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    pie_id INTEGER NOT NULL,
+    user_id INTEGER NOT NULL,
+    filling_score INTEGER CHECK(filling_score >= 1 AND filling_score <= 5),
+    pastry_score INTEGER CHECK(pastry_score >= 1 AND pastry_score <= 5),
+    appearance_score INTEGER CHECK(appearance_score >= 1 AND appearance_score <= 5),
+    overall_score INTEGER CHECK(overall_score >= 1 AND overall_score <= 5),
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (pie_id) REFERENCES pies(id),
+    FOREIGN KEY (user_id) REFERENCES users(id),
+    UNIQUE(pie_id, user_id)
+);
+
+-- Settings Table (for app configuration)
+CREATE TABLE settings (
+    key TEXT PRIMARY KEY,
+    value TEXT NOT NULL
+);2.2 Database Initialization
+
+Create db/init.js module
+Check if database exists on startup
+Run schema creation if needed
+Insert default settings
+Handle errors gracefully
+2.3 Query Functions
+Create reusable query functions in db/queries.js:
+
+User CRUD operations
+Pie CRUD operations
+Review CRUD operations
+Leaderboard data aggregation
+Check if user has reviewed specific pie
+Phase 3: Backend API Development
+Estimated Time: 8-10 hours3.1 Server Setup (server/index.js)
+
+Initialize Express app
+Configure middleware (body-parser, cookie-parser, session)
+Set up static file serving for frontend
+Configure CORS if needed
+Error handling middleware
+Listen on port 9993
+3.2 Authentication System (routes/auth.js)Endpoints:
+POST /api/auth/register-first-admin
+- Check if any users exist
+- If none, create first admin
+- Return success/error
+
+POST /api/auth/login
+- Validate credentials
+- Create session
+- Set auth cookie
+- Return user data (without password)
+
+POST /api/auth/logout
+- Destroy session
+- Clear cookie
+- Return success
+
+GET /api/auth/check
+- Verify session validity
+- Return current user or 4013.3 User Management (routes/users.js)Endpoints:
+POST /api/users
+- Admin only
+- Create new reviewer user
+- Hash password
+- Return user data
+
+GET /api/users
+- Admin only
+- List all users
+- Exclude password hashes3.4 Pie Management (routes/pies.js)Endpoints:
+POST /api/pies
+- Authenticated users only
+- Create new pie entry
+- Return created pie
+
+GET /api/pies
+- Public endpoint (no auth)
+- Return all pies with aggregated review data
+- Calculate average scores per category
+- Include reviewer names and individual scores
+- Sort by overall average score (highest first)
+
+GET /api/pies/:id
+- Get single pie with all reviews
+- Public endpoint3.5 Review Management (routes/reviews.js)Endpoints:
+POST /api/reviews
+- Authenticated users only
+- Validate scores (1-5)
+- Check user hasn't already reviewed this pie
+- Create review
+- Return created review
+
+GET /api/reviews/my-reviews
+- Authenticated users only
+- Return all reviews by current user
+
+GET /api/pies/:pieId/can-review
+- Check if current user has already reviewed
+- Return boolean3.6 Middleware (middleware/auth.js)
+javascript- requireAuth: Verify user is logged in
+- requireAdmin: Verify user is admin
+- optionalAuth: Attach user if logged in, but don't requirePhase 4: Frontend Development
+Estimated Time: 12-16 hours4.1 Base Setup
+
+Configure Tailwind CSS
+Set up routing (React Router or similar)
+Create theme context for dark/light mode
+Implement cookie-based theme persistence
+Create base layout with logo and theme toggle
+4.2 Design SystemColor Palette:
+Primary: Dark Magenta (#8B008B)
+Light Mode:
+- Background: #FFFFFF
+- Text: #1F2937
+- Secondary: #F3F4F6
+
+Dark Mode:
+- Background: #111827
+- Text: #F9FAFB
+- Secondary: #1F2937Components to Build:
+
+Button (primary, secondary variants)
+Input/Form fields
+Card component
+Table component
+Modal/Dialog
+Star rating input
+Loading spinner
+Toast notifications
+4.3 Authentication PagesFirst Boot / Register Admin (/setup)
+
+Check if setup is needed via API
+Display logo prominently
+Registration form:
+
+Username input
+Password input
+Confirm password input
+Submit button
+
+
+Redirect to login on success
+Show in both light/dark mode
+Login Page (/login)
+
+Logo display
+Username input
+Password input
+Submit button
+Error message display
+Theme toggle in header
+Redirect to dashboard on success
+4.4 Main Public Page (/)Leaderboard Table:
+
+Responsive table design
+Columns:
+
+Rank (#)
+Pie Name
+Per reviewer: Filling, Pastry, Appearance, Overall (with reviewer name as column header or sub-header)
+Average Overall Score (highlighted)
+
+
+Mobile responsive (consider card view on small screens)
+Auto-refresh or manual refresh option
+Filter/search functionality (optional enhancement)
+"Login to Review" button for unauthenticated users
+4.5 Admin Dashboard (/dashboard)Layout:
+
+Navigation header with logo, theme toggle, logout button
+Two main sections/tabs:
+
+Add New Pie
+Review Pies
+
+
+Add New Pie Section:
+
+Simple form with pie name input
+Submit button
+Success/error feedback
+Clear form on success
+Review Pies Section:
+
+List of all pies
+Visual indicator: Reviewed (greyed out/disabled) vs. Not Reviewed (highlighted/enabled)
+For unreviewed pies:
+
+Click to open review modal
+Modal contains:
+
+Pie name
+Four star rating inputs (1-5):
+
+Filling
+Pastry
+Appearance
+Overall Rating
+
+
+Submit button
+Cancel button
+
+
+
+
+For reviewed pies:
+
+Show user's scores
+"Already reviewed" indicator
+Optional: Link to leaderboard
+
+
+4.6 User Management Page (/users)Admin Only:
+
+List of existing users
+"Create New User" button
+Create user modal:
+
+Username input
+Password input
+Role selection (Admin/Reviewer)
+Submit button
+
+
+Delete user functionality (optional, with confirmation)
+4.7 Global ComponentsHeader:
+
+Logo (links to home)
+Navigation menu (conditional on auth state)
+Theme toggle
+User menu (username, logout)
+Theme Toggle:
+
+Sun/Moon icon
+Smooth transition between themes
+Persist choice in cookie
+Phase 5: PWA Implementation
+Estimated Time: 4-5 hours5.1 Web App Manifest (public/manifest.json)
+json{
+  "name": "Pie Tracker",
+  "short_name": "PieTracker",
+  "description": "Track and rate mince pie tastings",
+  "start_url": "/",
+  "display": "standalone",
+  "theme_color": "#8B008B",
+  "background_color": "#FFFFFF",
+  "icons": [
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}5.2 Service Worker
+
+Cache static assets
+Cache API responses (with appropriate strategies)
+Offline fallback page
+Update notification mechanism
+5.3 Icons & Assets
+
+Generate PWA icons in multiple sizes (192x192, 512x512)
+Create splash screens
+Optimize logo for various contexts
+5.4 Installation Prompt
+
+Detect if app is installable
+Show custom install prompt
+Handle installation events
+Phase 6: Docker Containerization
+Estimated Time: 3-4 hours6.1 DockerfiledockerfileFROM node:18-alpine
+
+# Set working directory
+WORKDIR /app
+
+# Copy package files
+COPY package*.json ./
+
+# Install dependencies
+RUN npm ci --production
+
+# Copy application code
+COPY . .
+
+# Build frontend
+RUN npm run build
+
+# Create db directory
+RUN mkdir -p /db
+
+# Expose port
+EXPOSE 9993
+
+# Set environment variables
+ENV NODE_ENV=production
+ENV DB_PATH=/db/pietracker.db
+
+# Start application
+CMD ["node", "server/index.js"]6.2 Docker Compose (for testing)yamlversion: '3.8'
+services:
+  pie-tracker:
+    build: .
+    ports:
+      - "9993:9993"
+    volumes:
+      - ./data/db:/db
+    environment:
+      - NODE_ENV=production
+      - SESSION_SECRET=change-me-in-production6.3 Volume Configuration
+
+Ensure /db directory is properly created
+Configure server to use /db/pietracker.db as database path
+Test volume persistence (container restart should retain data)
+6.4 Environment Variables
+
+SESSION_SECRET (for express-session)
+DB_PATH (default: /db/pietracker.db)
+PORT (default: 9993)
+NODE_ENV (production)
+Phase 7: Polish & Animations
+Estimated Time: 4-6 hours7.1 AnimationsPage Transitions:
+
+Fade in/out between routes
+Slide animations for modals
+Component Animations:
+
+Hover effects on buttons and cards
+Star rating hover/select animations
+Loading skeletons for data fetching
+Toast notification slide-ins
+Theme toggle smooth transition
+List Animations:
+
+Stagger animation for pie list items
+Smooth sorting transitions on leaderboard
+7.2 Tailwind Configurationjavascript// tailwind.config.js
+module.exports = {
+  darkMode: 'class',
+  theme: {
+    extend: {
+      colors: {
+        primary: {
+          DEFAULT: '#8B008B',
+          light: '#9B309B',
+          dark: '#6B006B',
+        }
+      },
+      animation: {
+        'fade-in': 'fadeIn 0.3s ease-in',
+        'slide-in': 'slideIn 0.3s ease-out',
+      },
+      keyframes: {
+        fadeIn: {
+          '0%': { opacity: '0' },
+          '100%': { opacity: '1' },
+        },
+        slideIn: {
+          '0%': { transform: 'translateY(-10px)', opacity: '0' },
+          '100%': { transform: 'translateY(0)', opacity: '1' },
+        }
+      }
+    }
+  },
+  plugins: []
+}7.3 Responsive Design Testing
+
+Test on mobile viewport (320px, 375px, 414px)
+Test on tablet viewport (768px, 1024px)
+Test on desktop (1280px+)
+Ensure touch-friendly tap targets (44x44px minimum)
+Phase 8: Testing & QA
+Estimated Time: 6-8 hours8.1 Functional TestingAuthentication Flow:
+
+ First boot shows setup page
+ Cannot access app before admin created
+ Admin creation works correctly
+ Login with correct credentials succeeds
+ Login with incorrect credentials fails
+ Logout clears session
+ Protected routes redirect to login
+ Session persists on page refresh
+User Management:
+
+ Admin can create new users
+ Created users can log in
+ Non-admins cannot access user management
+ Usernames are unique
+Pie Management:
+
+ Any authenticated user can add pie
+ Pie appears immediately after creation
+ Duplicate pie names are allowed (or decide to prevent)
+Review System:
+
+ User can review unreviewed pies
+ Cannot review same pie twice
+ All four scores are required
+ Scores must be 1-5
+ Reviews appear on leaderboard immediately
+ Average scores calculated correctly
+Leaderboard:
+
+ Shows all pies sorted by average score
+ Displays individual reviewer scores
+ Updates in real-time (or on refresh)
+ Accessible without login
+8.2 UI/UX Testing
+
+ Theme toggle works on all pages
+ Theme preference persists
+ Logo displays correctly
+ Animations are smooth (60fps)
+ Mobile responsive on all pages
+ Touch interactions work properly
+ Forms validate properly
+ Error messages are clear
+8.3 PWA Testing
+
+ App can be installed on mobile
+ App works offline (basic functionality)
+ Service worker caches appropriately
+ Manifest loads correctly
+ Icons display properly
+8.4 Docker Testing
+
+ Container builds successfully
+ App starts on port 9993
+ Database initializes correctly
+ Volume mapping works
+ Data persists after container restart
+ Can stop and start container without data loss
+8.5 Security Testing
+
+ Passwords are hashed (never stored plaintext)
+ SQL injection protection
+ XSS prevention
+ CSRF protection (if applicable)
+ Session security
+ Input validation on all endpoints
+Phase 9: Documentation
+Estimated Time: 3-4 hours9.1 README.mdSections to include:
+
+Project description
+Features list
+Installation instructions
+
+Docker run command
+Volume mapping explanation
+Port configuration
+
+
+First-time setup guide
+Usage guide
+
+Creating admin
+Adding users
+Adding pies
+Reviewing pies
+Viewing leaderboard
+
+
+Configuration options
+Troubleshooting
+Technology stack
+License
+9.2 Docker Hub / Unraid App Store Documentation
+
+Container description
+Template for Unraid
+Environment variables
+Volume paths
+Port mappings
+Example configurations
+9.3 Code Documentation
+
+Comment complex logic
+Document API endpoints
+Database schema documentation
+Setup instructions for developers
+Phase 10: Deployment Preparation
+Estimated Time: 2-3 hours10.1 Build Optimization
+
+Minify frontend assets
+Optimize images and logo
+Tree-shake unused code
+Enable gzip compression
+10.2 Docker Image Optimization
+
+Multi-stage build if beneficial
+Minimize image size
+Security scanning
+Tag versioning strategy

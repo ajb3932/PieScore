@@ -1,0 +1,13 @@
+services:
+  pie-tracker:
+    image: ajb3932/pie-tracker:latest
+    ports:
+      - "9993:9993"
+    volumes:
+      - ./data/db:/db
+    environment:
+      - NODE_ENV=production
+      - SESSION_SECRET=change-me-in-production-please-use-random-string
+      - DB_PATH=/db/pietracker.db
+      - PORT=9993
+    restart: unless-stopped

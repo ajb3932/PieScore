@@ -1,0 +1,70 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply transition-colors duration-200;
+    overflow-x: hidden;
+  }
+}
+
+/* Snow effect */
+.snowflake {
+  position: fixed;
+  top: -10px;
+  color: white !important;
+  font-size: 10px;
+  opacity: 0.7;
+  animation: fall linear infinite;
+  pointer-events: none;
+  z-index: 9999;
+}
+
+@keyframes fall {
+  to {
+    transform: translateY(100vh);
+  }
+}
+
+@layer components {
+  .btn {
+    @apply px-4 py-2 rounded-lg font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2;
+  }
+
+  .btn-primary {
+    @apply bg-primary hover:bg-primary-dark text-white focus:ring-primary;
+  }
+
+  .btn-secondary {
+    @apply bg-gray-200 hover:bg-gray-300 text-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-white;
+  }
+
+  .input {
+    @apply w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent;
+  }
+
+  .card {
+    @apply bg-white dark:bg-gray-800 rounded-lg shadow-md p-6;
+  }
+
+  .star-rating {
+    @apply flex gap-1;
+  }
+
+  .star {
+    @apply cursor-pointer text-3xl transition-all duration-150;
+  }
+
+  .star.filled {
+    @apply text-yellow-400;
+  }
+
+  .star.empty {
+    @apply text-gray-300 dark:text-gray-600;
+  }
+
+  .star:hover {
+    @apply scale-110;
+  }
+}
