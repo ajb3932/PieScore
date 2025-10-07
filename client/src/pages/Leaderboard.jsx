@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { Header } from '../components/Header';
-import { StarDisplay } from '../components/StarRating';
 import { Modal } from '../components/Modal';
 import { reviews, pies } from '../utils/api';
 
@@ -142,11 +141,8 @@ export function Leaderboard({ user, onLogout }) {
                   <th className="px-4 py-3 text-left">Pie Name</th>
                   <th className="px-4 py-3 text-left">Price</th>
                   <th className="px-4 py-3 text-left">Reviews</th>
-                  <th className="px-4 py-3 text-left">Filling</th>
-                  <th className="px-4 py-3 text-left">Pastry</th>
-                  <th className="px-4 py-3 text-left">Appearance</th>
-                  <th className="px-4 py-3 text-left">Overall</th>
-                  <th className="px-4 py-3 text-left">Value</th>
+                  <th className="px-4 py-3 text-left">Overall Score</th>
+                  <th className="px-4 py-3 text-left">Value for Money</th>
                   {user?.isAdmin && <th className="px-4 py-3 text-left">Actions</th>}
                 </tr>
               </thead>
@@ -191,20 +187,11 @@ export function Leaderboard({ user, onLogout }) {
                     <td className="px-4 py-4 text-gray-600 dark:text-gray-400">
                       {pie.review_count || 0}
                     </td>
-                    <td className="px-4 py-4">
-                      <StarDisplay value={pie.avg_filling} />
+                    <td className="px-4 py-4 text-gray-900 dark:text-white font-medium">
+                      {pie.avg_overall ? pie.avg_overall.toFixed(1) : 'N/A'}
                     </td>
-                    <td className="px-4 py-4">
-                      <StarDisplay value={pie.avg_pastry} />
-                    </td>
-                    <td className="px-4 py-4">
-                      <StarDisplay value={pie.avg_appearance} />
-                    </td>
-                    <td className="px-4 py-4">
-                      <StarDisplay value={pie.avg_overall} />
-                    </td>
-                    <td className="px-4 py-4">
-                      <StarDisplay value={pie.avg_value_for_money} />
+                    <td className="px-4 py-4 text-gray-900 dark:text-white font-medium">
+                      {pie.avg_value_for_money ? pie.avg_value_for_money.toFixed(1) : 'N/A'}
                     </td>
                     {user?.isAdmin && (
                       <td className="px-4 py-4">
@@ -213,13 +200,13 @@ export function Leaderboard({ user, onLogout }) {
                             onClick={() => openEditModal(pie)}
                             className="px-3 py-1 bg-christmas-gold text-gray-900 rounded hover:bg-yellow-500 transition-colors text-sm font-medium"
                           >
-                            Edit
+                            ✏️
                           </button>
                           <button
                             onClick={() => handleDeletePie(pie.id, pie.name)}
                             className="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700 transition-colors text-sm font-medium"
                           >
-                            Delete
+                            🗑️
                           </button>
                         </div>
                       </td>

@@ -265,35 +265,35 @@ export function Dashboard({ user, onLogout }) {
         <form onSubmit={handleSubmitReview} className="space-y-6">
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              Filling
+              Filling {fillingScore ? `(${fillingScore})` : ''}
             </label>
             <StarRating value={fillingScore} onChange={setFillingScore} />
           </div>
 
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              Pastry
+              Pastry {pastryScore ? `(${pastryScore})` : ''}
             </label>
             <StarRating value={pastryScore} onChange={setPastryScore} />
           </div>
 
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              Appearance
+              Appearance {appearanceScore ? `(${appearanceScore})` : ''}
             </label>
             <StarRating value={appearanceScore} onChange={setAppearanceScore} />
           </div>
 
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              Overall Rating
+              Overall Rating {overallScore ? `(${overallScore})` : ''}
             </label>
             <StarRating value={overallScore} onChange={setOverallScore} />
           </div>
 
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              Value for Money
+              Value for Money {valueForMoneyScore ? `(${valueForMoneyScore})` : ''}
             </label>
             <StarRating value={valueForMoneyScore} onChange={setValueForMoneyScore} />
           </div>

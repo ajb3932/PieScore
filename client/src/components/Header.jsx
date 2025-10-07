@@ -26,8 +26,12 @@ export function Header({ user, onLogout }) {
               className="flex items-center gap-2 text-2xl font-bold text-primary hover:text-primary-light transition-colors"
             >
               <img src="/icons/icon-192.png" alt="Pie Score Logo" className="w-8 h-8" />
-              <span>Pie Score</span>
             </button>
+            {user && (
+              <span className="text-gray-700 dark:text-gray-300">
+                {user.username}
+              </span>
+            )}
           </div>
 
           <div className="flex items-center gap-4">
@@ -37,27 +41,24 @@ export function Header({ user, onLogout }) {
                   onClick={() => navigate('/')}
                   className="btn btn-secondary text-sm"
                 >
-                  Table
+                  🏠
                 </button>
                 <button
                   onClick={() => navigate('/dashboard')}
                   className="btn btn-secondary text-sm"
                 >
-                  Dashboard
+                  📈
                 </button>
                 {user.isAdmin && (
                   <button
                     onClick={() => navigate('/users')}
                     className="btn btn-secondary text-sm"
                   >
-                    Users
+                    👪
                   </button>
                 )}
-                <span className="text-gray-700 dark:text-gray-300">
-                  {user.username}
-                </span>
                 <button onClick={handleLogout} className="btn btn-secondary text-sm">
-                  Logout
+                  🚪🏃‍♂️‍➡️
                 </button>
               </>
             )}

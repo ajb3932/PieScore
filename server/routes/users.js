@@ -1,11 +1,13 @@
 import express from 'express';
 import bcrypt from 'bcrypt';
 import * as queries from '../db/queries.js';
-import { requireAdmin } from '../middleware/auth.js';
+import { createRequireAdmin } from '../middleware/auth.js';
 
 const router = express.Router();
 
 export function createUserRoutes(db) {
+  const requireAdmin = createRequireAdmin(db);
+
   // Create new user (admin only)
   router.post('/', requireAdmin, async (req, res) => {
     try {

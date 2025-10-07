@@ -3,23 +3,52 @@ import { useState } from 'react';
 export function StarRating({ value, onChange, readonly = false }) {
   const [hover, setHover] = useState(0);
 
+  const handleClick = (star, isHalf) => {
+    if (readonly || !onChange) return;
+    const newValue = isHalf ? star - 0.5 : star;
+    onChange(newValue);
+  };
+
+  const handleMouseMove = (star, e) => {
+    if (readonly) return;
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const isLeftHalf = x < rect.width / 2;
+    setHover(isLeftHalf ? star - 0.5 : star);
+  };
+
+  const getStarClass = (star, currentValue) => {
+    if (star <= currentValue) return 'filled';
+    if (star - 0.5 === currentValue) return 'half-filled';
+    return 'empty';
+  };
+
   return (
     <div className="star-rating">
-      {[1, 2, 3, 4, 5].map((star) => (
-        <button
-          key={star}
-          type="button"
-          className={`star ${
-            star <= (hover || value) ? 'filled' : 'empty'
-          } ${readonly ? 'cursor-default' : ''}`}
-          onClick={() => !readonly && onChange && onChange(star)}
-          onMouseEnter={() => !readonly && setHover(star)}
-          onMouseLeave={() => !readonly && setHover(0)}
-          disabled={readonly}
-        >
-          ★
-        </button>
-      ))}
+      {[1, 2, 3, 4, 5].map((star) => {
+        const displayValue = hover || value;
+        const starClass = getStarClass(star, displayValue);
+
+        return (
+          <button
+            key={star}
+            type="button"
+            className={`star ${starClass} ${readonly ? 'cursor-default' : ''}`}
+            onClick={(e) => {
+              if (readonly) return;
+              const rect = e.currentTarget.getBoundingClientRect();
+              const x = e.clientX - rect.left;
+              const isLeftHalf = x < rect.width / 2;
+              handleClick(star, isLeftHalf);
+            }}
+            onMouseMove={(e) => handleMouseMove(star, e)}
+            onMouseLeave={() => !readonly && setHover(0)}
+            disabled={readonly}
+          >
+            {starClass === 'half-filled' ? '⯨' : '★'}
+          </button>
+        );
+      })}
     </div>
   );
 }

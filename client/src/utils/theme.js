@@ -4,7 +4,7 @@ export function getTheme() {
     .find(row => row.startsWith('theme='))
     ?.split('=')[1];
 
-  return saved || 'light';
+  return saved || 'dark';
 }
 
 export function setTheme(theme) {

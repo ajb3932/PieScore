@@ -60,6 +60,10 @@
     @apply text-yellow-400;
   }
 
+  .star.half-filled {
+    @apply text-yellow-400;
+  }
+
   .star.empty {
     @apply text-gray-300 dark:text-gray-600;
   }

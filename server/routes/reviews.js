@@ -15,11 +15,15 @@ export function createReviewRoutes(db) {
         return res.status(400).json({ error: 'All scores are required' });
       }
 
-      // Validate scores are in range
+      // Validate scores are in range and in 0.5 increments
       const scores = [fillingScore, pastryScore, appearanceScore, overallScore, valueForMoneyScore];
       for (const score of scores) {
-        if (score < 1 || score > 5) {
-          return res.status(400).json({ error: 'Scores must be between 1 and 5' });
+        if (score < 0.5 || score > 5) {
+          return res.status(400).json({ error: 'Scores must be between 0.5 and 5' });
+        }
+        // Check if score is in 0.5 increments (e.g., 1, 1.5, 2, 2.5, etc.)
+        if ((score * 2) % 1 !== 0) {
+          return res.status(400).json({ error: 'Scores must be in 0.5 increments' });
         }
       }
 
