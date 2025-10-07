@@ -6,7 +6,6 @@ A self-contained mince pie taste testing application designed to help teams coll
 
 ### First Run Setup
 <img src="https://raw.githubusercontent.com/ajb3932/famli/main/frontend/public/images/famli-first_run.jpg" title="First Run Setup" style="max-width:100%;" width="800" />
-![piescore](https://github.com/user-attachments/assets/dfe24fef-7584-4798-9959-c39ad0158f50)
 
 </div>
 
