@@ -33,10 +33,11 @@ export function Setup() {
 
     try {
       await auth.registerFirstAdmin(username, password);
-      navigate('/dashboard');
+      // The backend automatically logs in the admin, so we need to reload the page
+      // to trigger the auth check in App.jsx which will detect the session
+      window.location.href = '/dashboard';
     } catch (err) {
       setError(err.message);
-    } finally {
       setLoading(false);
     }
   };
@@ -47,7 +48,7 @@ export function Setup() {
         <div className="text-center mb-8">
           <h1 className="text-4xl mb-4">🥧</h1>
           <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-            Welcome to Pie Tracker
+            Welcome to Pie Score
           </h2>
           <p className="text-gray-600 dark:text-gray-400">
             Create your admin account to get started

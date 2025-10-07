@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { ThemeProvider } from './components/ThemeProvider';
 import { Setup } from './pages/Setup';
 import { Login } from './pages/Login';
+import { Register } from './pages/Register';
 import { Leaderboard } from './pages/Leaderboard';
 import { Dashboard } from './pages/Dashboard';
 import { Users } from './pages/Users';
@@ -105,6 +106,16 @@ function App() {
                 <Navigate to="/dashboard" replace />
               ) : (
                 <Login onLogin={handleLogin} />
+              )
+            }
+          />
+          <Route
+            path="/register"
+            element={
+              user ? (
+                <Navigate to="/dashboard" replace />
+              ) : (
+                <Register />
               )
             }
           />

@@ -1,13 +1,15 @@
 services:
-  pie-tracker:
-    image: ajb3932/pie-tracker:latest
-    ports:
+  piescore:
+      container_name: piescore
+      hostname: piescore
+      image: ajb3932/piescore:latest
+      ports:
       - "9993:9993"
-    volumes:
+      volumes:
       - ./data/db:/db
-    environment:
+      environment:
       - NODE_ENV=production
       - SESSION_SECRET=change-me-in-production-please-use-random-string
-      - DB_PATH=/db/pietracker.db
+      - DB_PATH=/db/piescore.db
       - PORT=9993
-    restart: unless-stopped
+      restart: unless-stopped

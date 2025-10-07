@@ -1,6 +1,6 @@
 {
-  "name": "Pie Tracker",
-  "short_name": "PieTracker",
+  "name": "Pie Score",
+  "short_name": "PieScore",
   "description": "Track and rate mince pie tastings",
   "start_url": "/",
   "display": "standalone",

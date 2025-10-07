@@ -179,7 +179,7 @@ export function Dashboard({ user, onLogout }) {
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Image URL (optional)
+                  Image URL
                 </label>
                 <input
                   type="url"
@@ -191,7 +191,7 @@ export function Dashboard({ user, onLogout }) {
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Price (£) (optional)
+                  Price per Pie (£)
                 </label>
                 <input
                   type="number"

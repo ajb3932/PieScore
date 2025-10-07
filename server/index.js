@@ -67,6 +67,6 @@ app.use((err, req, res, next) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`Pie Tracker server running on port ${PORT}`);
+  console.log(`Pie Score server running on port ${PORT}`);
   console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
 });

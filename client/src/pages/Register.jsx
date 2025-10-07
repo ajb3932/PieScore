@@ -1,40 +1,41 @@
-import { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { auth } from '../utils/api';
 import { Header } from '../components/Header';
 
-export function Login({ onLogin }) {
+export function Register() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const location = useLocation();
-
-  useEffect(() => {
-    if (location.state?.message) {
-      setSuccess(location.state.message);
-      // Clear the message after 5 seconds
-      setTimeout(() => setSuccess(''), 5000);
-    }
-  }, [location]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
 
-    if (!username || !password) {
-      setError('Username and password are required');
+    if (!username || !password || !confirmPassword) {
+      setError('All fields are required');
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      setError('Passwords do not match');
+      return;
+    }
+
+    if (password.length < 6) {
+      setError('Password must be at least 6 characters');
       return;
     }
 
     setLoading(true);
 
     try {
-      const response = await auth.login(username, password);
-      if (onLogin) onLogin(response.user);
-      navigate('/dashboard');
+      await auth.register(username, password);
+      // Redirect to login page after successful registration
+      navigate('/login', { state: { message: 'Registration successful! Please login.' } });
     } catch (err) {
       setError(err.message);
     } finally {
@@ -50,8 +51,11 @@ export function Login({ onLogin }) {
           <div className="text-center mb-8">
             <h1 className="text-4xl mb-4">🥧</h1>
             <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
-              Login to Pie Score
+              Register for Pie Score
             </h2>
+            <p className="text-gray-600 dark:text-gray-400 text-sm">
+              Create an account to start reviewing pies
+            </p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -80,6 +84,22 @@ export function Login({ onLogin }) {
                 className="input"
                 required
               />
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                Must be at least 6 characters
+              </p>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Confirm Password
+              </label>
+              <input
+                type="password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                className="input"
+                required
+              />
             </div>
 
             {error && (
@@ -88,29 +108,23 @@ export function Login({ onLogin }) {
               </div>
             )}
 
-            {success && (
-              <div className="bg-green-100 dark:bg-green-900 border border-green-400 dark:border-green-700 text-green-700 dark:text-green-200 px-4 py-3 rounded">
-                {success}
-              </div>
-            )}
-
             <button
               type="submit"
               disabled={loading}
               className="btn btn-primary w-full"
             >
-              {loading ? 'Logging in...' : 'Login'}
+              {loading ? 'Registering...' : 'Register'}
             </button>
 
             <div className="text-center mt-4">
               <p className="text-sm text-gray-600 dark:text-gray-400">
-                Don't have an account?{' '}
+                Already have an account?{' '}
                 <button
                   type="button"
-                  onClick={() => navigate('/register')}
+                  onClick={() => navigate('/login')}
                   className="text-primary hover:text-primary-light font-medium"
                 >
-                  Register here
+                  Login here
                 </button>
               </p>
             </div>

@@ -1,4 +1,4 @@
-# 🥧 Pie Tracker - Quick Start Guide
+# 🥧 Pie Score - Quick Start Guide
 
 ## Local Development
 

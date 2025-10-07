@@ -25,14 +25,20 @@ export function Header({ user, onLogout }) {
               onClick={() => navigate('/')}
               className="flex items-center gap-2 text-2xl font-bold text-primary hover:text-primary-light transition-colors"
             >
-              <img src="/icons/icon-192.png" alt="Pie Tracker Logo" className="w-8 h-8" />
-              <span>Pie Tracker</span>
+              <img src="/icons/icon-192.png" alt="Pie Score Logo" className="w-8 h-8" />
+              <span>Pie Score</span>
             </button>
           </div>
 
           <div className="flex items-center gap-4">
             {user && (
               <>
+                <button
+                  onClick={() => navigate('/')}
+                  className="btn btn-secondary text-sm"
+                >
+                  Table
+                </button>
                 <button
                   onClick={() => navigate('/dashboard')}
                   className="btn btn-secondary text-sm"
