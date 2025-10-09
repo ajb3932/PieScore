@@ -52,8 +52,12 @@
     @apply flex gap-1;
   }
 
+  .star-wrapper {
+    @apply cursor-pointer transition-all duration-150 bg-transparent border-0 p-0;
+  }
+
   .star {
-    @apply cursor-pointer text-3xl transition-all duration-150;
+    @apply text-3xl block pointer-events-none;
   }
 
   .star.filled {
@@ -61,14 +65,24 @@
   }
 
   .star.half-filled {
-    @apply text-yellow-400;
+    background: linear-gradient(90deg, rgb(250, 204, 21) 50%, rgb(209, 213, 219) 50%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  html.dark .star.half-filled {
+    background: linear-gradient(90deg, rgb(250, 204, 21) 50%, rgb(75, 85, 99) 50%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
   }
 
   .star.empty {
     @apply text-gray-300 dark:text-gray-600;
   }
 
-  .star:hover {
+  .star-wrapper:hover {
     @apply scale-110;
   }
 }

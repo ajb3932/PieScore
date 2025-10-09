@@ -33,7 +33,7 @@ export function StarRating({ value, onChange, readonly = false }) {
           <button
             key={star}
             type="button"
-            className={`star ${starClass} ${readonly ? 'cursor-default' : ''}`}
+            className={`star-wrapper ${readonly ? 'cursor-default' : ''}`}
             onClick={(e) => {
               if (readonly) return;
               const rect = e.currentTarget.getBoundingClientRect();
@@ -45,7 +45,7 @@ export function StarRating({ value, onChange, readonly = false }) {
             onMouseLeave={() => !readonly && setHover(0)}
             disabled={readonly}
           >
-            {starClass === 'half-filled' ? '⯨' : '★'}
+            <span className={`star ${starClass}`}>★</span>
           </button>
         );
       })}
